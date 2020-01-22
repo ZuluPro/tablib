@@ -36,8 +36,8 @@ class XLSFormat:
             return False
 
     @classmethod
-    def export_set(cls, dataset):
-        """Returns XLS representation of Dataset."""
+    def export_stream_set(cls, dataset, **kwargs):
+        """Returns XLS representation of Dataset as file-like."""
 
         wb = xlwt.Workbook(encoding='utf8')
         ws = wb.add_sheet(dataset.title if dataset.title else 'Tablib Dataset')
@@ -46,6 +46,15 @@ class XLSFormat:
 
         stream = BytesIO()
         wb.save(stream)
+        stream.seek(0)
+
+        return stream
+
+
+    @classmethod
+    def export_set(cls, dataset, **kwargs):
+        """Returns XLS representation of Dataset."""
+        stream = cls.export_stream_set(dataset, **kwargs)
         return stream.getvalue()
 
     @classmethod

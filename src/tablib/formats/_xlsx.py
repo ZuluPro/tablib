@@ -25,8 +25,8 @@ class XLSXFormat:
             return False
 
     @classmethod
-    def export_set(cls, dataset, freeze_panes=True):
-        """Returns XLSX representation of Dataset."""
+    def export_stream_set(cls, dataset, freeze_panes=True, **kwargs):
+        """Returns XLSX representation of Dataset as file-like."""
         wb = Workbook()
         ws = wb.worksheets[0]
         ws.title = dataset.title if dataset.title else 'Tablib Dataset'
@@ -35,6 +35,14 @@ class XLSXFormat:
 
         stream = BytesIO()
         wb.save(stream)
+        stream.seek(0)
+
+        return stream
+
+    @classmethod
+    def export_set(cls, dataset, freeze_panes=True, **kwargs):
+        """Returns XLSX representation of Dataset."""
+        stream = cls.export_stream_set(dataset, freeze_panes=freeze_panes, **kwargs)
         return stream.getvalue()
 
     @classmethod
